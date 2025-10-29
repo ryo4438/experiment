@@ -1,11 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>アンケートフォーム</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Googleフォーム URL 自動ジャンプ</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 1rem;
+      margin-top: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button.primary {
+      background-color: #1a73e8;
+      color: white;
+    }
+    .output {
+      margin-top: 1rem;
+      padding: 10px;
+      background: #f7f9fc;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      word-break: break-all;
+    }
+  </style>
 </head>
 <body>
-  <h1>アンケートにご協力ください</h1>
-  <iframe src="https://docs.google.com/forms/d/e/xxxxxxxxxxx/viewform?embedded=true" width="640" height="800" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます…</iframe>
+  <h1>Googleフォーム URL 自動ジャンプ</h1>
+
+  <p>テキストを入力して「生成」ボタンを押すと、Googleフォームに自動入力された状態で新しいタブが開きます。</p>
+
+  <label>GoogleフォームのベースURL</label>
+  <input
+    type="url"
+    id="baseUrl"
+    value="https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url"
+  >
+
+  <label>フォーム項目のキー（entry 番号）</label>
+  <input type="text" id="entryKey" value="entry.745845663">
+
+  <label>埋め込みたいテキスト</label>
+  <input type="text" id="textValue" placeholder="ここに入力した値がフォームに反映されます">
+
+  <button class="primary" id="generateBtn">URL を生成してジャンプ</button>
+
+  <div class="output" id="output"></div>
+
+  <script>
+    const baseUrl = document.getElementById('baseUrl');
+    const entryKey = document.getElementById('entryKey');
+    const textValue = document.getElementById('textValue');
+    const output = document.getElementById('output');
+    const generateBtn = document.getElementById('generateBtn');
+
+    function generateUrl(autoOpen = true) {
+      const base = baseUrl.value.trim();
+      const key = entryKey.value.trim();
+      const val = textValue.value.trim();
+
+      if (!base || !key) {
+        output.textContent = 'ベースURLまたはキーが指定されていません。';
+        return '';
+      }
+
+      const separator = base.includes('?') ? '&' : '?';
+      const fullUrl = `${base}${separator}${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+
+      output.textContent = fullUrl;
+
+      if (autoOpen) {
+        // 新しいタブで開く（クリックイベント後ならポップアップブロックされにくい）
+        window.open(fullUrl, '_blank', 'noopener');
+      }
+
+      return fullUrl;
+    }
+
+    generateBtn.addEventListener('click', () => {
+      generateUrl(true);
+    });
+  </script>
 </body>
 </html>
+
+
