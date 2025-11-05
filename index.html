@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>介入実験ページ</title>
+<title>介入実験ページ（完全版）</title>
 <style>
   body {
     font-family: "Segoe UI", sans-serif;
@@ -19,7 +19,6 @@
     margin-bottom: 0.5rem;
   }
 
-  /* --- 共通デザイン --- */
   .question-box {
     background: #fff;
     border: 2px solid #e0e0e0;
@@ -55,7 +54,6 @@
     box-sizing: border-box;
   }
 
-  /* --- ボタン --- */
   button {
     margin-top: 1rem;
     padding: 10px 14px;
@@ -83,14 +81,23 @@
     color: darkred;
     text-align: center;
   }
+
+  .note {
+    font-size: 0.9rem;
+    color: #555;
+  }
 </style>
 </head>
 <body>
 
-<!---------------- 介入前アンケート画面 ---------------->
+<!-- ===== 介入前アンケート ===== -->
 <div id="PreIntMode" style="display:block">
   <form id="surveyForm">
 
+    <div class="question-box" data-question="q2" data-key="entry.807851115">
+      <p>参加者id</p>
+      <input type="text" name="q2" placeholder="数字を入力">
+    </div>
     <div class="question-box" data-question="q1" data-key="entry.58144620">
       <p>Q1：今どれくらい目が覚めていますか？</p>
       <label><input type="radio" name="q1" value="9"> 非常にはっきりと目覚めている</label>
@@ -108,7 +115,7 @@
   </form>
 </div>
 
-<!---------------- 介入モード画面 ---------------->
+<!-- ===== 介入モード ===== -->
 <div id="InterventionMode" style="display:none">
   <div class="question-box">
     <h1>介入1</h1>
@@ -127,7 +134,7 @@
   </div>
 </div>
 
-<!------------------- 介入後アンケート画面（例） ------------------->
+<!-- ===== 介入後アンケート ===== -->
 <div id="AftIntMode" style="display:none">
   <form id="AftsurveyForm">
     <div class="question-box" data-question="a1" data-key="entry.745845663">
@@ -142,22 +149,13 @@
       <label><input type="radio" name="a1" value="2"> 眠い，起きている努力が少し必要</label>
       <label><input type="radio" name="a1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
     </div>
-    <div class="question-box" data-question="a2" data-key="entry.1270584944">
-      <p>周りの目を気にすることなく使えましたか？</p>
-      <label><input type="radio" name="a2" value="7"> 全く気にならなかった</label>
-      <label><input type="radio" name="a2" value="6"> ほとんど気にならなかった</label>
-      <label><input type="radio" name="a2" value="5"> あまり気にならなかった</label>
-      <label><input type="radio" name="a2" value="4"> どちらでもない</label>
-      <label><input type="radio" name="a2" value="3"> 少し気になった</label>
-      <label><input type="radio" name="a2" value="2"> やや気になった</label>
-      <label><input type="radio" name="a2" value="1"> 非常に気になった</label>
-    </div>
+
     <button class="primary" id="AftSurveyBtn" disabled>回答を送信する</button>
   </form>
 </div>
 
 <script>
-  // ======== 画面管理 ========
+  // ===== 画面管理 =====
   const screens = [
     document.getElementById("PreIntMode"),
     document.getElementById("InterventionMode"),
@@ -166,48 +164,65 @@
   let screen_ind = 0;
   const answers = [];
 
-  // ======== 複数質問対応：全回答チェック ========
-   function setupSurvey(formId, btnId) {
+  // ===== 複数質問対応（ラジオ + 自由記述） =====
+  function setupSurvey(formId, btnId, openUrl = false) {
     const form = document.getElementById(formId);
     const btn = document.getElementById(btnId);
     const questions = form.querySelectorAll(".question-box");
 
-    // 回答状態チェック
-    form.addEventListener("change", () => {
-      console.log("changed");
+    // 回答入力チェック
+    form.addEventListener("input", () => {
       const allAnswered = Array.from(questions).every(qBox => {
         const name = qBox.dataset.question;
-        return form.querySelector(`input[name="${name}"]:checked`);
+        const input = form.querySelector(`[name="${name}"]`);
+        if (!input) return false;
+        if (input.type === "radio") {
+          return form.querySelector(`input[name="${name}"]:checked`);
+        } else if (input.type === "text") {
+          return input.value.trim() !== "";
+        }
+        return false;
       });
       btn.disabled = !allAnswered;
     });
 
-    // 送信時の処理
+    // 送信処理
     btn.addEventListener("click", e => {
       e.preventDefault();
-
       questions.forEach(qBox => {
         const name = qBox.dataset.question;
         const key = qBox.dataset.key;
-        const selected = form.querySelector(`input[name="${name}"]:checked`);
-        if (selected) {
-          answers.push([key, selected.value]);
+        const input = form.querySelector(`[name="${name}"]`);
+        if (!input) return;
+        let val = "";
+        if (input.type === "radio") {
+          const selected = form.querySelector(`input[name="${name}"]:checked`);
+          if (selected) val = selected.value;
+        } else if (input.type === "text") {
+          val = input.value.trim();
         }
+        if (val !== "") answers.push([key, val]);
       });
 
-      console.log("現在のanswers:", answers);
-      const prefilledUrl = generatePrefilledFormUrl(answers, baseurl);
-      console.log(prefilledUrl);
+      console.log("answers配列:", answers);
+
+      // 介入後アンケートのみURLを開く
+      if (openUrl) {
+        const prefilledUrl = generatePrefilledFormUrl(answers, baseurl);
+        window.open(prefilledUrl, "_blank");
+      }
+
       changeDisplay();
     });
   }
 
-  setupSurvey("surveyForm", "PreSurveyBtn");
-  setupSurvey("AftsurveyForm", "AftSurveyBtn");
+  // フォームごとに設定
+  setupSurvey("surveyForm", "PreSurveyBtn", false);  // 介入前アンケート
+  setupSurvey("AftsurveyForm", "AftSurveyBtn", true); // 介入後アンケートでURLを開く
 
-  // ======== 介入画面（タイマー起動） ========
+  // ===== 介入画面タイマー =====
   function startTimer() {
-    let timeLeft = 10;
+    let timeLeft = 60;
     const timer = document.getElementById("timer");
     timer.textContent = timeLeft;
     const countdown = setInterval(() => {
@@ -226,29 +241,53 @@
     screen_ind++;
     if (screen_ind < screens.length) {
       screens[screen_ind].style.display = "block";
-      if (screens[screen_ind].id === "InterventionMode") {
-        startTimer();
-      }
+      if (screens[screen_ind].id === "InterventionMode") startTimer();
     }
   }
 
-  // ======== Google formへの転記 ========
+  // ===== Googleフォーム事前入力URL生成 =====
   const baseurl = "https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url";
-
   function generatePrefilledFormUrl(answers, baseUrl) {
-  if (!Array.isArray(answers) || answers.length === 0) {
-    console.warn("answers が空です。");
-    return baseUrl;
+    if (!Array.isArray(answers) || answers.length === 0) return baseUrl;
+    const params = answers
+      .map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
+      .join("&");
+    return `${baseUrl}&${params}`;
   }
 
-  // 各回答をURLエンコードして結合
-  const params = answers
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join("&");
+  // ===== 介入モード 画像回答管理 =====
+  const totalImages = 3;
+  let images = Array.from({ length: totalImages }, (_, i) => `imgs/${i + 1}.jpg`);
+  let current_index = 0;
+  const imgElement = document.getElementById("Prompts");
+  const changeButton = document.getElementById("changeButton");
+  const saveBtn = document.getElementById("saveBtn");
+  const AnswerBox = document.getElementById("AnswerBox");
 
-  // URLを返す
-  return `${baseUrl}&${params}`;
-  }
+  const imgkeysque = ["entry.1270584944", "entry.1546562637", "entry.827723848", "entry.1534631744", "entry.101664986"];
+  const anskeysque = ["entry.123989728", "entry.1704288844", "entry.1758329231", "entry.1412008365", "entry.1276957276"];
+
+  changeButton.addEventListener("click", () => {
+    current_index = (current_index + 1) % images.length;
+    imgElement.src = images[current_index];
+  });
+
+  saveBtn.addEventListener("click", () => {
+    const ansText = AnswerBox.value.trim();
+    if (!ansText) return;
+    // answers.push([`image${current_index}`, ansText]);
+    answers.push([imgkeysque.shift(), images[current_index]]);
+    answers.push([anskeysque.shift(), ansText]);
+    images.splice(current_index, 1);
+    if (images.length === 0) {
+      alert("全ての画像への回答が完了しました。");
+      return;
+    }
+    current_index = current_index % images.length;
+    imgElement.src = images[current_index];
+    AnswerBox.value = "";
+  });
 </script>
+
 </body>
 </html>
