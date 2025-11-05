@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ラジオボタンフォーム</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    padding: 20px;
+  }
+
+  .question {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question h3 {
+    margin-bottom: 15px;
+  }
+
+  .option {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .option input {
+    display: none;
+  }
+
+  .option:hover {
+    background-color: #f1f1f1;
+  }
+
+  .option input:checked + span {
+    background-color: #e0f7fa;
+    border-color: #00acc1;
+  }
+
+  .option span {
+    display: block;
+    padding: 5px 0;
+  }
+</style>
+</head>
+<body>
+
+<form>
+  <div class="question">
+    <h3>現在どれくらい目が覚めていますか</h3>
+    <label class="option">
+      <input type="radio" name="color" value="red">
+      <span>赤</span>
+    </label>
+    <label class="option">
+      <input type="radio" name="color" value="blue">
+      <span>青</span>
+    </label>
+    <label class="option">
+      <input type="radio" name="color" value="green">
+      <span>緑</span>
+    </label>
+  </div>
+
+  <button type="submit">送信</button>
+</form>
+
+</body>
+</html>

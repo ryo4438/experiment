@@ -50,54 +50,181 @@
       border: 1px solid #ddd;
       word-break: break-all;
     }
+    #timer {
+      font-size: 3em;
+      color: darkred;
+    }
+    #surveyMode label {
+      display: inline-block; /* 横並びにする */
+      margin-right: 15px;    /* ラベル間の間隔 */
+    }
+
   </style>
 </head>
 <body>
-  <h1>Googleフォーム URL 自動ジャンプ</h1>
 
-  <p>テキストを入力して「生成」ボタンを押すと、Googleフォームに自動入力された状態で新しいタブが開きます。</p>
+  <!-- 介入モード 始め -->
+  <div id="interventionMode">
+    <h1>介入1</h1>
 
-  <label>GoogleフォームのベースURL</label>
-  <input
-    type="url"
-    id="baseUrl"
-    value="https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url"
-  >
+    <p>文章を足して画像を面白くしてください</p>
 
-  <label>フォーム項目のキー（entry 番号）</label>
-  <input type="text" id="entryKey" value="entry.745845663">
+    <!-- <label>GoogleフォームのベースURL</label> -->
+    <!-- <input
+      type="url"
+      id="baseUrl"
+      value="https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url"
+    > -->
 
-  <label>埋め込みたいテキスト</label>
-  <input type="text" id="textValue" placeholder="ここに入力した値がフォームに反映されます">
+    <img id="Prompts" src="imgs/1.jpg" alt="お題画像">
 
-  <button class="primary" id="generateBtn">URL を生成してジャンプ</button>
+    <label>回答</label>
+    <input type="text" id="AnswerBox" placeholder="回答を記入してください">
 
-  <div class="output" id="output"></div>
+    <button id="changeButton">お題を変える</button>
+    <button id="saveBtn">回答を決定する</button>
+    <!-- <button class="primary" id="generateBtn">回答を送信する</button> -->
 
+    <h1>60秒カウントダウン</h1>
+    <div id="timer">10</div>
+  </div>
+
+
+
+
+<!------------------- 介入前覚醒度アンケート 始め ---------------------->
+<div id="PreIntMode" style="display:none">
+  <input type="text" id="surveyAnswer" placeholder="アンケート回答">
+  
+  <form id="surveyForm">
+    <p>今どれくらい目が覚めていますか？：</p>
+    <label>
+      <input type="radio" name="color" value="9"> 非常にはっきりと目覚めている
+    </label><br>
+    <label>
+      <input type="radio" name="color" value="8"> とても目覚めている 
+    </label><br>
+    <label>
+      <input type="radio" name="color" value="7"> 目覚めている
+    </label><br>
+    <label>
+      <input type="radio" name="color" value="6"> やや目覚めている
+    </label><br>
+    <label>
+      <input type="radio" name="color" value="5"> どちらでもない
+    </label><br>
+    <label>
+      <input type="radio" name="color" value="4"> 眠くなる兆候がある
+    </label><br>   
+    <label>
+      <input type="radio" name="color" value="3"> 眠いが，起きている努力は必要ない
+    </label><br>   
+    <label>
+      <input type="radio" name="color" value="2"> 眠い，起きている努力が少し必要
+    </label><br>   
+    <label>
+      <input type="radio" name="color" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている
+    </label><br> 
+    <!-- 最初は無効化しておく -->
+    <button class="primary" id="PreSurveyBtn" disabled>
+      回答を送信する※必ず遷移先のフォームの送信ボタンを押してください
+    </button>
+  </form>
+</div>
+
+
+
+<script>
+  // ラジオボタン要素を取得
+  const radios = document.querySelectorAll('input[name="color"]');
+  const PreSurveyBtn = document.getElementById('PreSurveyBtn');
+  const PreSurveyEntry = "entry.58144620";
+
+  // 各ラジオボタンにイベントリスナーを追加
+  radios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      // いずれかが選択されたらボタンを有効化
+      PreSurveyBtn.disabled = false;
+    });
+  });
+
+  PreSurveyBtn.addEventListener("click", ()=>{
+    const selected = document.querySelector('input[name="color"]:checked');
+    answers.push([PreSurveyKey, selected.value]);
+  });
+
+
+
+</script>
+
+<!--------------------- 介入前覚醒度アンケート 終わり ----------------------->
+
+  <div id="Preoogiri" style="display:none">
+    <input type="text" id="surveyAnswer" placeholder="アンケート回答">
+    <button id="submitSurvey">送信</button>
+    <form id="surveyForm">
+      <p>今どれくらい目が覚めていますか？：</p>
+        <label>
+          <input type="radio" name="color" value="赤"> 赤
+        </label><br>
+        <label>
+          <input type="radio" name="color" value="青"> 青
+        </label><br>
+        <label>
+          <input type="radio" name="color" value="緑"> 緑
+        </label>
+      <button class="primary" id="generateBtn">回答を送信する※必ず遷移先のフォームの送信ボタンを押してください</button>
+  <button id="submitSurvey">送信</button>
+      
+
+    </form>
+  </div>
+
+    </form>
+  </div>
+  <!-- <div class="output" id="output"></div> -->
+
+
+  <!-- 共通利用　はじめ -->
   <script>
-    const baseUrl = document.getElementById('baseUrl');
-    const entryKey = document.getElementById('entryKey');
-    const textValue = document.getElementById('textValue');
-    const output = document.getElementById('output');
+    const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url";
+    const entryKey = "entry.745845663"; // 事前入力URLから取得した正しいキーに置き換える
+    // const output = document.getElementById('output');
     const generateBtn = document.getElementById('generateBtn');
+    const AnswerBox = document.getElementById('AnswerBox');
+
+    const totalImages = 3;
+    const images = Array.from({ length: totalImages }, (_, i) => `imgs/${i + 1}.jpg`);
+    let current_index = 0;
+    const imgElement = document.getElementById("Prompts");
+    const button = document.getElementById("changeButton");
+    const answers = []
+
+    button.addEventListener("click", ()=>{
+      current_index = (current_index + 1) % images.length;
+      imgElement.src = images[current_index];
+    });
+
+    
+
+
 
     function generateUrl(autoOpen = true) {
-      const base = baseUrl.value.trim();
-      const key = entryKey.value.trim();
-      const val = textValue.value.trim();
+      const base = baseUrl;
+      const key = entryKey;
+      const val = answers[0][1];
 
       if (!base || !key) {
-        output.textContent = 'ベースURLまたはキーが指定されていません。';
+        // output.textContent = 'ベースURLまたはキーが指定されていません。';
         return '';
       }
 
       const separator = base.includes('?') ? '&' : '?';
       const fullUrl = `${base}${separator}${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
 
-      output.textContent = fullUrl;
+      // output.textContent = fullUrl;
 
       if (autoOpen) {
-        // 新しいタブで開く（クリックイベント後ならポップアップブロックされにくい）
         window.open(fullUrl, '_blank', 'noopener');
       }
 
@@ -107,8 +234,25 @@
     generateBtn.addEventListener('click', () => {
       generateUrl(true);
     });
+
+    saveBtn.addEventListener('click', () =>{
+      answers.push([images[current_index], AnswerBox.value.trim()]);
+      console.log(answers);
+      images.splice(current_index, 1);
+      if(current_index>=images.length){
+        current_index = 1; 
+      }
+      imgElement.src = images[current_index];
+      AnswerBox.value = "";
+    });
+
+    function switchToPreSurveyMode() {
+      document.getElementById("interventionMode").style.display = "none";
+      document.getElementById("PreSurveyMode").style.display = "block";
+    };
+
   </script>
+
+  <script src="timer.js"></script>
 </body>
 </html>
-
-
