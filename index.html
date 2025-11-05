@@ -1,258 +1,254 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Googleフォーム URL 自動ジャンプ</title>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    h1 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: 600;
-    }
-    input[type="text"], input[type="url"] {
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 1rem;
-      margin-top: 0.4rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 10px 14px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button.primary {
-      background-color: #1a73e8;
-      color: white;
-    }
-    .output {
-      margin-top: 1rem;
-      padding: 10px;
-      background: #f7f9fc;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      word-break: break-all;
-    }
-    #timer {
-      font-size: 3em;
-      color: darkred;
-    }
-    #surveyMode label {
-      display: inline-block; /* 横並びにする */
-      margin-right: 15px;    /* ラベル間の間隔 */
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>介入実験ページ</title>
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    line-height: 1.6;
+    background-color: #fafafa;
+  }
 
-  </style>
+  h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* --- 共通デザイン --- */
+  .question-box {
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  .question-box p {
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  label {
+    display: block;
+    margin: 6px 0;
+    cursor: pointer;
+  }
+
+  input[type="radio"] {
+    margin-right: 6px;
+    transform: scale(1.1);
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 1rem;
+    margin-top: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  /* --- ボタン --- */
+  button {
+    margin-top: 1rem;
+    padding: 10px 14px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+  }
+
+  button.primary {
+    background-color: #1a73e8;
+    color: white;
+  }
+
+  button.primary:disabled {
+    background-color: #b0c8f2;
+    color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+
+  #timer {
+    font-size: 3em;
+    color: darkred;
+    text-align: center;
+  }
+</style>
 </head>
 <body>
 
-  <!-- 介入モード 始め -->
-  <div id="interventionMode">
-    <h1>介入1</h1>
+<!---------------- 介入前アンケート画面 ---------------->
+<div id="PreIntMode" style="display:block">
+  <form id="surveyForm">
 
+    <div class="question-box" data-question="q1" data-key="entry.58144620">
+      <p>Q1：今どれくらい目が覚めていますか？</p>
+      <label><input type="radio" name="q1" value="9"> 非常にはっきりと目覚めている</label>
+      <label><input type="radio" name="q1" value="8"> とても目覚めている</label>
+      <label><input type="radio" name="q1" value="7"> 目覚めている</label>
+      <label><input type="radio" name="q1" value="6"> やや目覚めている</label>
+      <label><input type="radio" name="q1" value="5"> どちらでもない</label>
+      <label><input type="radio" name="q1" value="4"> 眠くなる兆候がある</label>
+      <label><input type="radio" name="q1" value="3"> 眠いが，起きている努力は必要ない</label>
+      <label><input type="radio" name="q1" value="2"> 眠い，起きている努力が少し必要</label>
+      <label><input type="radio" name="q1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
+    </div>
+
+    <button class="primary" id="PreSurveyBtn" disabled>回答を送信する</button>
+  </form>
+</div>
+
+<!---------------- 介入モード画面 ---------------->
+<div id="InterventionMode" style="display:none">
+  <div class="question-box">
+    <h1>介入1</h1>
     <p>文章を足して画像を面白くしてください</p>
 
-    <!-- <label>GoogleフォームのベースURL</label> -->
-    <!-- <input
-      type="url"
-      id="baseUrl"
-      value="https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url"
-    > -->
-
-    <img id="Prompts" src="imgs/1.jpg" alt="お題画像">
+    <img id="Prompts" src="imgs/1.jpg" alt="お題画像" style="max-width:100%; border-radius:6px; border:1px solid #ccc;">
 
     <label>回答</label>
     <input type="text" id="AnswerBox" placeholder="回答を記入してください">
 
     <button id="changeButton">お題を変える</button>
     <button id="saveBtn">回答を決定する</button>
-    <!-- <button class="primary" id="generateBtn">回答を送信する</button> -->
 
     <h1>60秒カウントダウン</h1>
-    <div id="timer">10</div>
+    <div id="timer">60</div>
   </div>
+</div>
 
-
-
-
-<!------------------- 介入前覚醒度アンケート 始め ---------------------->
-<div id="PreIntMode" style="display:none">
-  <input type="text" id="surveyAnswer" placeholder="アンケート回答">
-  
-  <form id="surveyForm">
-    <p>今どれくらい目が覚めていますか？：</p>
-    <label>
-      <input type="radio" name="color" value="9"> 非常にはっきりと目覚めている
-    </label><br>
-    <label>
-      <input type="radio" name="color" value="8"> とても目覚めている 
-    </label><br>
-    <label>
-      <input type="radio" name="color" value="7"> 目覚めている
-    </label><br>
-    <label>
-      <input type="radio" name="color" value="6"> やや目覚めている
-    </label><br>
-    <label>
-      <input type="radio" name="color" value="5"> どちらでもない
-    </label><br>
-    <label>
-      <input type="radio" name="color" value="4"> 眠くなる兆候がある
-    </label><br>   
-    <label>
-      <input type="radio" name="color" value="3"> 眠いが，起きている努力は必要ない
-    </label><br>   
-    <label>
-      <input type="radio" name="color" value="2"> 眠い，起きている努力が少し必要
-    </label><br>   
-    <label>
-      <input type="radio" name="color" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている
-    </label><br> 
-    <!-- 最初は無効化しておく -->
-    <button class="primary" id="PreSurveyBtn" disabled>
-      回答を送信する※必ず遷移先のフォームの送信ボタンを押してください
-    </button>
+<!------------------- 介入後アンケート画面（例） ------------------->
+<div id="AftIntMode" style="display:none">
+  <form id="AftsurveyForm">
+    <div class="question-box" data-question="a1" data-key="entry.745845663">
+      <p>今どれくらい目が覚めていますか？</p>
+      <label><input type="radio" name="a1" value="9"> 非常にはっきりと目覚めている</label>
+      <label><input type="radio" name="a1" value="8"> とても目覚めている</label>
+      <label><input type="radio" name="a1" value="7"> 目覚めている</label>
+      <label><input type="radio" name="a1" value="6"> やや目覚めている</label>
+      <label><input type="radio" name="a1" value="5"> どちらでもない</label>
+      <label><input type="radio" name="a1" value="4"> 眠くなる兆候がある</label>
+      <label><input type="radio" name="a1" value="3"> 眠いが，起きている努力は必要ない</label>
+      <label><input type="radio" name="a1" value="2"> 眠い，起きている努力が少し必要</label>
+      <label><input type="radio" name="a1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
+    </div>
+    <div class="question-box" data-question="a2" data-key="entry.1270584944">
+      <p>周りの目を気にすることなく使えましたか？</p>
+      <label><input type="radio" name="a2" value="7"> 全く気にならなかった</label>
+      <label><input type="radio" name="a2" value="6"> ほとんど気にならなかった</label>
+      <label><input type="radio" name="a2" value="5"> あまり気にならなかった</label>
+      <label><input type="radio" name="a2" value="4"> どちらでもない</label>
+      <label><input type="radio" name="a2" value="3"> 少し気になった</label>
+      <label><input type="radio" name="a2" value="2"> やや気になった</label>
+      <label><input type="radio" name="a2" value="1"> 非常に気になった</label>
+    </div>
+    <button class="primary" id="AftSurveyBtn" disabled>回答を送信する</button>
   </form>
 </div>
 
-
-
 <script>
-  // ラジオボタン要素を取得
-  const radios = document.querySelectorAll('input[name="color"]');
-  const PreSurveyBtn = document.getElementById('PreSurveyBtn');
-  const PreSurveyEntry = "entry.58144620";
+  // ======== 画面管理 ========
+  const screens = [
+    document.getElementById("PreIntMode"),
+    document.getElementById("InterventionMode"),
+    document.getElementById("AftIntMode")
+  ];
+  let screen_ind = 0;
+  const answers = [];
 
-  // 各ラジオボタンにイベントリスナーを追加
-  radios.forEach(radio => {
-    radio.addEventListener('change', () => {
-      // いずれかが選択されたらボタンを有効化
-      PreSurveyBtn.disabled = false;
-    });
-  });
+  // ======== 複数質問対応：全回答チェック ========
+   function setupSurvey(formId, btnId) {
+    const form = document.getElementById(formId);
+    const btn = document.getElementById(btnId);
+    const questions = form.querySelectorAll(".question-box");
 
-  PreSurveyBtn.addEventListener("click", ()=>{
-    const selected = document.querySelector('input[name="color"]:checked');
-    answers.push([PreSurveyKey, selected.value]);
-  });
-
-
-
-</script>
-
-<!--------------------- 介入前覚醒度アンケート 終わり ----------------------->
-
-  <div id="Preoogiri" style="display:none">
-    <input type="text" id="surveyAnswer" placeholder="アンケート回答">
-    <button id="submitSurvey">送信</button>
-    <form id="surveyForm">
-      <p>今どれくらい目が覚めていますか？：</p>
-        <label>
-          <input type="radio" name="color" value="赤"> 赤
-        </label><br>
-        <label>
-          <input type="radio" name="color" value="青"> 青
-        </label><br>
-        <label>
-          <input type="radio" name="color" value="緑"> 緑
-        </label>
-      <button class="primary" id="generateBtn">回答を送信する※必ず遷移先のフォームの送信ボタンを押してください</button>
-  <button id="submitSurvey">送信</button>
-      
-
-    </form>
-  </div>
-
-    </form>
-  </div>
-  <!-- <div class="output" id="output"></div> -->
-
-
-  <!-- 共通利用　はじめ -->
-  <script>
-    const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url";
-    const entryKey = "entry.745845663"; // 事前入力URLから取得した正しいキーに置き換える
-    // const output = document.getElementById('output');
-    const generateBtn = document.getElementById('generateBtn');
-    const AnswerBox = document.getElementById('AnswerBox');
-
-    const totalImages = 3;
-    const images = Array.from({ length: totalImages }, (_, i) => `imgs/${i + 1}.jpg`);
-    let current_index = 0;
-    const imgElement = document.getElementById("Prompts");
-    const button = document.getElementById("changeButton");
-    const answers = []
-
-    button.addEventListener("click", ()=>{
-      current_index = (current_index + 1) % images.length;
-      imgElement.src = images[current_index];
+    // 回答状態チェック
+    form.addEventListener("change", () => {
+      console.log("changed");
+      const allAnswered = Array.from(questions).every(qBox => {
+        const name = qBox.dataset.question;
+        return form.querySelector(`input[name="${name}"]:checked`);
+      });
+      btn.disabled = !allAnswered;
     });
 
-    
+    // 送信時の処理
+    btn.addEventListener("click", e => {
+      e.preventDefault();
 
+      questions.forEach(qBox => {
+        const name = qBox.dataset.question;
+        const key = qBox.dataset.key;
+        const selected = form.querySelector(`input[name="${name}"]:checked`);
+        if (selected) {
+          answers.push([key, selected.value]);
+        }
+      });
 
+      console.log("現在のanswers:", answers);
+      const prefilledUrl = generatePrefilledFormUrl(answers, baseurl);
+      console.log(prefilledUrl);
+      changeDisplay();
+    });
+  }
 
-    function generateUrl(autoOpen = true) {
-      const base = baseUrl;
-      const key = entryKey;
-      const val = answers[0][1];
+  setupSurvey("surveyForm", "PreSurveyBtn");
+  setupSurvey("AftsurveyForm", "AftSurveyBtn");
 
-      if (!base || !key) {
-        // output.textContent = 'ベースURLまたはキーが指定されていません。';
-        return '';
+  // ======== 介入画面（タイマー起動） ========
+  function startTimer() {
+    let timeLeft = 10;
+    const timer = document.getElementById("timer");
+    timer.textContent = timeLeft;
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timer.textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        timer.textContent = "終了！";
+        changeDisplay();
       }
+    }, 1000);
+  }
 
-      const separator = base.includes('?') ? '&' : '?';
-      const fullUrl = `${base}${separator}${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
-
-      // output.textContent = fullUrl;
-
-      if (autoOpen) {
-        window.open(fullUrl, '_blank', 'noopener');
+  function changeDisplay() {
+    screens[screen_ind].style.display = "none";
+    screen_ind++;
+    if (screen_ind < screens.length) {
+      screens[screen_ind].style.display = "block";
+      if (screens[screen_ind].id === "InterventionMode") {
+        startTimer();
       }
-
-      return fullUrl;
     }
+  }
 
-    generateBtn.addEventListener('click', () => {
-      generateUrl(true);
-    });
+  // ======== Google formへの転記 ========
+  const baseurl = "https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url";
 
-    saveBtn.addEventListener('click', () =>{
-      answers.push([images[current_index], AnswerBox.value.trim()]);
-      console.log(answers);
-      images.splice(current_index, 1);
-      if(current_index>=images.length){
-        current_index = 1; 
-      }
-      imgElement.src = images[current_index];
-      AnswerBox.value = "";
-    });
+  function generatePrefilledFormUrl(answers, baseUrl) {
+  if (!Array.isArray(answers) || answers.length === 0) {
+    console.warn("answers が空です。");
+    return baseUrl;
+  }
 
-    function switchToPreSurveyMode() {
-      document.getElementById("interventionMode").style.display = "none";
-      document.getElementById("PreSurveyMode").style.display = "block";
-    };
+  // 各回答をURLエンコードして結合
+  const params = answers
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join("&");
 
-  </script>
-
-  <script src="timer.js"></script>
+  // URLを返す
+  return `${baseUrl}&${params}`;
+  }
+</script>
 </body>
 </html>
