@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>介入実験ページ（完全版）</title>
+<title>介入実験ページ（パスロック付き完全版）</title>
 <style>
   body {
     font-family: "Segoe UI", sans-serif;
@@ -86,207 +86,263 @@
     font-size: 0.9rem;
     color: #555;
   }
+
+  .credit {
+  font-size: 0.8em;
+  color: #666;
+  text-align: right;
+  margin-top: 4px;
+  }
+
+  #mainContent { display: none; }  /* パス認証前は非表示 */
 </style>
 </head>
 <body>
 
-<!-- ===== 介入前アンケート ===== -->
-<div id="PreIntMode" style="display:block">
-  <form id="surveyForm">
-
-    <div class="question-box" data-question="q2" data-key="entry.807851115">
-      <p>参加者id</p>
-      <input type="text" name="q2" placeholder="数字を入力">
-    </div>
-    <div class="question-box" data-question="q1" data-key="entry.58144620">
-      <p>Q1：今どれくらい目が覚めていますか？</p>
-      <label><input type="radio" name="q1" value="9"> 非常にはっきりと目覚めている</label>
-      <label><input type="radio" name="q1" value="8"> とても目覚めている</label>
-      <label><input type="radio" name="q1" value="7"> 目覚めている</label>
-      <label><input type="radio" name="q1" value="6"> やや目覚めている</label>
-      <label><input type="radio" name="q1" value="5"> どちらでもない</label>
-      <label><input type="radio" name="q1" value="4"> 眠くなる兆候がある</label>
-      <label><input type="radio" name="q1" value="3"> 眠いが，起きている努力は必要ない</label>
-      <label><input type="radio" name="q1" value="2"> 眠い，起きている努力が少し必要</label>
-      <label><input type="radio" name="q1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
-    </div>
-
-    <button class="primary" id="PreSurveyBtn" disabled>回答を送信する</button>
-  </form>
+<!-- ===== パスロック ===== -->
+<div id="lockScreen" style="text-align:center; margin-top:100px;">
+  <h2>アクセス認証</h2>
+  <p>パスワードを入力してください</p>
+  <input type="password" id="passwordInput" placeholder="パスワードを入力" style="padding:8px; width:70%;">
+  <br>
+  <button id="unlockBtn" class="primary">送信</button>
+  <p id="lockMsg" style="color:red; display:none;">パスワードが違います</p>
+  <!-- <a href="anq.html">anq</a> -->
 </div>
 
-<!-- ===== 介入モード ===== -->
-<div id="InterventionMode" style="display:none">
-  <div class="question-box">
-    <h1>介入1</h1>
-    <p>文章を足して画像を面白くしてください</p>
+<!-- ===== コンテンツ本体 ===== -->
+<div id="mainContent">
+  <!-- ===== 介入前アンケート ===== -->
+  <div id="PreIntMode" style="display:block">
+    <form id="surveyForm">
 
-    <img id="Prompts" src="imgs/1.jpg" alt="お題画像" style="max-width:100%; border-radius:6px; border:1px solid #ccc;">
+      <div class="question-box" data-question="q2" data-key="entry.807851115">
+        <p>参加者id</p>
+        <input type="text" name="q2" placeholder="数字を入力">
+      </div>
+      <div class="question-box" data-question="q1" data-key="entry.58144620">
+        <p>Q1：今どれくらい目が覚めていますか？</p>
+        <label><input type="radio" name="q1" value="9"> 非常にはっきりと目覚めている</label>
+        <label><input type="radio" name="q1" value="8"> とても目覚めている</label>
+        <label><input type="radio" name="q1" value="7"> 目覚めている</label>
+        <label><input type="radio" name="q1" value="6"> やや目覚めている</label>
+        <label><input type="radio" name="q1" value="5"> どちらでもない</label>
+        <label><input type="radio" name="q1" value="4"> 眠くなる兆候がある</label>
+        <label><input type="radio" name="q1" value="3"> 眠いが，起きている努力は必要ない</label>
+        <label><input type="radio" name="q1" value="2"> 眠い，起きている努力が少し必要</label>
+        <label><input type="radio" name="q1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
+      </div>
 
-    <label>回答</label>
-    <input type="text" id="AnswerBox" placeholder="回答を記入してください">
+      <button class="primary" id="PreSurveyBtn" disabled>回答を送信する</button>
+    </form>
+  </div>
 
-    <button id="changeButton">お題を変える</button>
-    <button id="saveBtn">回答を決定する</button>
+  <!-- ===== 介入モード ===== -->
+  <div id="InterventionMode" style="display:none">
+    <div class="question-box">
+      <h1>介入1</h1>
+      <p>文章を足して画像を面白くしてください</p>
 
-    <h1>60秒カウントダウン</h1>
-    <div id="timer">60</div>
+      <img id="Prompts" src="imgs/1.jpg" alt="お題画像" style="max-width:100%; border-radius:6px; border:1px solid #ccc;">
+      <p class="credit">画像提供：Example Source / Photo by John Doe</p>
+
+      <label>回答</label>
+      <input type="text" id="AnswerBox" placeholder="回答を記入してください">
+
+      <button id="changeButton">お題を変える</button>
+      <button id="saveBtn">回答を決定する</button>
+
+      <h1>60秒カウントダウン</h1>
+      <div id="timer">60</div>
+    </div>
+  </div>
+
+  <!-- ===== 介入後アンケート ===== -->
+  <div id="AftIntMode" style="display:none">
+    <form id="AftsurveyForm">
+      <div class="question-box" data-question="a1" data-key="entry.745845663">
+        <p>今どれくらい目が覚めていますか？</p>
+        <label><input type="radio" name="a1" value="9"> 非常にはっきりと目覚めている</label>
+        <label><input type="radio" name="a1" value="8"> とても目覚めている</label>
+        <label><input type="radio" name="a1" value="7"> 目覚めている</label>
+        <label><input type="radio" name="a1" value="6"> やや目覚めている</label>
+        <label><input type="radio" name="a1" value="5"> どちらでもない</label>
+        <label><input type="radio" name="a1" value="4"> 眠くなる兆候がある</label>
+        <label><input type="radio" name="a1" value="3"> 眠いが，起きている努力は必要ない</label>
+        <label><input type="radio" name="a1" value="2"> 眠い，起きている努力が少し必要</label>
+        <label><input type="radio" name="a1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
+      </div>
+
+      <button class="primary" id="AftSurveyBtn" disabled>回答を送信する</button>
+    </form>
   </div>
 </div>
 
-<!-- ===== 介入後アンケート ===== -->
-<div id="AftIntMode" style="display:none">
-  <form id="AftsurveyForm">
-    <div class="question-box" data-question="a1" data-key="entry.745845663">
-      <p>今どれくらい目が覚めていますか？</p>
-      <label><input type="radio" name="a1" value="9"> 非常にはっきりと目覚めている</label>
-      <label><input type="radio" name="a1" value="8"> とても目覚めている</label>
-      <label><input type="radio" name="a1" value="7"> 目覚めている</label>
-      <label><input type="radio" name="a1" value="6"> やや目覚めている</label>
-      <label><input type="radio" name="a1" value="5"> どちらでもない</label>
-      <label><input type="radio" name="a1" value="4"> 眠くなる兆候がある</label>
-      <label><input type="radio" name="a1" value="3"> 眠いが，起きている努力は必要ない</label>
-      <label><input type="radio" name="a1" value="2"> 眠い，起きている努力が少し必要</label>
-      <label><input type="radio" name="a1" value="1"> とても眠い，起きている努力がとても必要，眠気と戦っている</label>
-    </div>
-
-    <button class="primary" id="AftSurveyBtn" disabled>回答を送信する</button>
-  </form>
-</div>
-
 <script>
-  // ===== 画面管理 =====
-  const screens = [
-    document.getElementById("PreIntMode"),
-    document.getElementById("InterventionMode"),
-    document.getElementById("AftIntMode")
-  ];
-  let screen_ind = 0;
-  const answers = [];
+/* ========= パスロック処理 ========= */
+const validHash = "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae";
 
-  // ===== 複数質問対応（ラジオ + 自由記述） =====
-  function setupSurvey(formId, btnId, openUrl = false) {
-    const form = document.getElementById(formId);
-    const btn = document.getElementById(btnId);
-    const questions = form.querySelectorAll(".question-box");
+async function hashString(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
-    // 回答入力チェック
-    form.addEventListener("input", () => {
-      const allAnswered = Array.from(questions).every(qBox => {
-        const name = qBox.dataset.question;
-        const input = form.querySelector(`[name="${name}"]`);
-        if (!input) return false;
-        if (input.type === "radio") {
-          return form.querySelector(`input[name="${name}"]:checked`);
-        } else if (input.type === "text") {
-          return input.value.trim() !== "";
-        }
-        return false;
-      });
-      btn.disabled = !allAnswered;
-    });
-
-    // 送信処理
-    btn.addEventListener("click", e => {
-      e.preventDefault();
-      questions.forEach(qBox => {
-        const name = qBox.dataset.question;
-        const key = qBox.dataset.key;
-        const input = form.querySelector(`[name="${name}"]`);
-        if (!input) return;
-        let val = "";
-        if (input.type === "radio") {
-          const selected = form.querySelector(`input[name="${name}"]:checked`);
-          if (selected) val = selected.value;
-        } else if (input.type === "text") {
-          val = input.value.trim();
-        }
-        if (val !== "") answers.push([key, val]);
-      });
-
-      console.log("answers配列:", answers);
-
-      // 介入後アンケートのみURLを開く
-      if (openUrl) {
-        const prefilledUrl = generatePrefilledFormUrl(answers, baseurl);
-        window.open(prefilledUrl, "_blank");
-      }
-
-      changeDisplay();
-    });
+document.getElementById("unlockBtn").addEventListener("click", async () => {
+  const pwd = document.getElementById("passwordInput").value.trim();
+  const hash = await hashString(pwd);
+  if (hash === validHash) {
+    document.getElementById("lockScreen").style.display = "none";
+    document.getElementById("mainContent").style.display = "block";
+  } else {
+    document.getElementById("lockMsg").style.display = "block";
   }
+});
 
-  // フォームごとに設定
-  setupSurvey("surveyForm", "PreSurveyBtn", false);  // 介入前アンケート
-  setupSurvey("AftsurveyForm", "AftSurveyBtn", true); // 介入後アンケートでURLを開く
+/* ========= ページ制御関連 ========= */
+const screens = [
+  document.getElementById("PreIntMode"),
+  document.getElementById("InterventionMode"),
+  document.getElementById("AftIntMode")
+];
+let screen_ind = 0;
+const answers = [];
 
-  // ===== 介入画面タイマー =====
-  function startTimer() {
-    let timeLeft = 60;
-    const timer = document.getElementById("timer");
+/* ========= アンケート入力チェック ========= */
+function setupSurvey(formId, btnId, openUrl = false) {
+  const form = document.getElementById(formId);
+  const btn = document.getElementById(btnId);
+  const questions = form.querySelectorAll(".question-box");
+
+  form.addEventListener("input", () => {
+    const allAnswered = Array.from(questions).every(qBox => {
+      const name = qBox.dataset.question;
+      const inputs = form.querySelectorAll(`[name="${name}"]`);
+      if (inputs.length === 0) return false;
+
+      if (inputs[0].type === "radio") {
+        return Array.from(inputs).some(i => i.checked);
+      } else if (inputs[0].type === "text") {
+        const val = inputs[0].value.trim();
+        // q2（参加者id）は整数チェックを厳密に行う
+        if (name === "q2") {
+          return /^\d+$/.test(val);  // 整数のみ許可
+        }
+        return val !== "";
+      }
+      return false;
+    });
+    btn.disabled = !allAnswered;
+  });
+
+  btn.addEventListener("click", e => {
+    e.preventDefault();
+    questions.forEach(qBox => {
+      const name = qBox.dataset.question;
+      const key = qBox.dataset.key;
+      const inputs = form.querySelectorAll(`[name="${name}"]`);
+      let val = "";
+      if (inputs[0].type === "radio") {
+        const selected = Array.from(inputs).find(i => i.checked);
+        if (selected) val = selected.value;
+      } else if (inputs[0].type === "text") {
+        val = inputs[0].value.trim();
+      }
+      if (val !== "") answers.push([key, val]);
+    });
+
+    // IDの偶奇で介入画像を決定
+    if (formId === "surveyForm") {
+      const idBox = form.querySelector('input[name="q2"]');
+      const idVal = parseInt(idBox.value.trim());
+      setImagesById(idVal);
+    }
+
+    if (openUrl) {
+      const prefilledUrl = generatePrefilledFormUrl(answers, baseurl);
+      window.open(prefilledUrl, "_blank");
+    }
+    changeDisplay();
+  });
+}
+
+setupSurvey("surveyForm", "PreSurveyBtn", false);
+setupSurvey("AftsurveyForm", "AftSurveyBtn", true);
+
+/* ========= タイマー ========= */
+function startTimer() {
+  let timeLeft = 60;
+  const timer = document.getElementById("timer");
+  timer.textContent = timeLeft;
+  const countdown = setInterval(() => {
+    timeLeft--;
     timer.textContent = timeLeft;
-    const countdown = setInterval(() => {
-      timeLeft--;
-      timer.textContent = timeLeft;
-      if (timeLeft <= 0) {
-        clearInterval(countdown);
-        timer.textContent = "終了！";
-        changeDisplay();
-      }
-    }, 1000);
-  }
-
-  function changeDisplay() {
-    screens[screen_ind].style.display = "none";
-    screen_ind++;
-    if (screen_ind < screens.length) {
-      screens[screen_ind].style.display = "block";
-      if (screens[screen_ind].id === "InterventionMode") startTimer();
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      timer.textContent = "終了！";
+      changeDisplay();
     }
+  }, 1000);
+}
+
+/* ========= 画面遷移 ========= */
+function changeDisplay() {
+  screens[screen_ind].style.display = "none";
+  screen_ind++;
+  if (screen_ind < screens.length) {
+    screens[screen_ind].style.display = "block";
+    if (screens[screen_ind].id === "InterventionMode") startTimer();
   }
+}
 
-  // ===== Googleフォーム事前入力URL生成 =====
-  const baseurl = "https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url";
-  function generatePrefilledFormUrl(answers, baseUrl) {
-    if (!Array.isArray(answers) || answers.length === 0) return baseUrl;
-    const params = answers
-      .map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
-      .join("&");
-    return `${baseUrl}&${params}`;
+/* ========= Google Form URL生成 ========= */
+const baseurl = "https://docs.google.com/forms/d/e/1FAIpQLSdsbqueulSnjfVTd1DeLEFhAT4zLj5F4CZX0ZvxiLoCLqytDA/viewform?usp=pp_url";
+function generatePrefilledFormUrl(answers, baseUrl) {
+  if (!Array.isArray(answers) || answers.length === 0) return baseUrl;
+  const params = answers.map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`).join("&");
+  return `${baseUrl}&${params}`;
+}
+
+/* ========= 介入画像管理（偶奇で分岐） ========= */
+let images = [];
+let current_index = 0;
+const imgElement = document.getElementById("Prompts");
+const changeButton = document.getElementById("changeButton");
+const saveBtn = document.getElementById("saveBtn");
+const AnswerBox = document.getElementById("AnswerBox");
+
+const imgkeysque = ["entry.1270584944", "entry.1546562637", "entry.827723848"];
+const anskeysque = ["entry.123989728", "entry.1704288844", "entry.1758329231"];
+
+function setImagesById(idVal) {
+  if (idVal % 2 === 0) {
+    images = ["imgs/1.jpg", "imgs/2.jpg", "imgs/3.jpg"]; // 偶数ID用
+  } else {
+    images = ["imgs/a.jpg", "imgs/b.jpg", "imgs/c.jpg"]; // 奇数ID用
   }
+  current_index = 0;
+  imgElement.src = images[current_index];
+}
 
-  // ===== 介入モード 画像回答管理 =====
-  const totalImages = 3;
-  let images = Array.from({ length: totalImages }, (_, i) => `imgs/${i + 1}.jpg`);
-  let current_index = 0;
-  const imgElement = document.getElementById("Prompts");
-  const changeButton = document.getElementById("changeButton");
-  const saveBtn = document.getElementById("saveBtn");
-  const AnswerBox = document.getElementById("AnswerBox");
+/* ========= ボタン操作 ========= */
+changeButton.addEventListener("click", () => {
+  current_index = (current_index + 1) % images.length;
+  imgElement.src = images[current_index];
+});
 
-  const imgkeysque = ["entry.1270584944", "entry.1546562637", "entry.827723848", "entry.1534631744", "entry.101664986"];
-  const anskeysque = ["entry.123989728", "entry.1704288844", "entry.1758329231", "entry.1412008365", "entry.1276957276"];
-
-  changeButton.addEventListener("click", () => {
-    current_index = (current_index + 1) % images.length;
-    imgElement.src = images[current_index];
-  });
-
-  saveBtn.addEventListener("click", () => {
-    const ansText = AnswerBox.value.trim();
-    if (!ansText) return;
-    // answers.push([`image${current_index}`, ansText]);
-    answers.push([imgkeysque.shift(), images[current_index]]);
-    answers.push([anskeysque.shift(), ansText]);
-    images.splice(current_index, 1);
-    if (images.length === 0) {
-      alert("全ての画像への回答が完了しました。");
-      return;
-    }
-    current_index = current_index % images.length;
-    imgElement.src = images[current_index];
-    AnswerBox.value = "";
-  });
+saveBtn.addEventListener("click", () => {
+  const ansText = AnswerBox.value.trim();
+  if (!ansText) return;
+  answers.push([imgkeysque.shift(), images[current_index]]);
+  answers.push([anskeysque.shift(), ansText]);
+  images.splice(current_index, 1);
+  if (images.length === 0) {
+    alert("全ての画像への回答が完了しました。");
+    return;
+  }
+  current_index = current_index % images.length;
+  imgElement.src = images[current_index];
+  AnswerBox.value = "";
+});
 </script>
 
 </body>
