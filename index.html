@@ -140,11 +140,11 @@
   <!-- ===== 介入モード ===== -->
   <div id="InterventionMode" style="display:none">
     <div class="question-box">
-      <h1>介入1</h1>
+      <h1>実験タスク</h1>
       <p>文章を足して画像を面白くしてください</p>
 
       <img id="Prompts" src="imgs/1.jpg" alt="お題画像" style="max-width:100%; border-radius:6px; border:1px solid #ccc;">
-      <p class="credit">画像提供：Example Source / Photo by John Doe</p>
+      <p class="credit" id="CreditInfo">画像提供：Example Source / Photo by John Doe</p>
 
       <label>回答</label>
       <input type="text" id="AnswerBox" placeholder="回答を記入してください">
@@ -306,6 +306,7 @@ function generatePrefilledFormUrl(answers, baseUrl) {
 let images = [];
 let current_index = 0;
 const imgElement = document.getElementById("Prompts");
+const creditInfo = document.getElementById("CreditInfo");
 const changeButton = document.getElementById("changeButton");
 const saveBtn = document.getElementById("saveBtn");
 const AnswerBox = document.getElementById("AnswerBox");
@@ -315,24 +316,36 @@ const anskeysque = ["entry.123989728", "entry.1704288844", "entry.1758329231"];
 
 function setImagesById(idVal) {
   if (idVal % 2 === 0) {
-    images = ["imgs/1.jpg", "imgs/2.jpg", "imgs/3.jpg"]; // 偶数ID用
+    images = [
+      {image:"imgs/1.jpg", credit: "aaa"}, 
+      {image:"imgs/2.jpg", credit: "aaa"}, 
+      {image:"imgs/3.jpg", credit: "bbb"}
+    ]; 
+    // 偶数ID用
   } else {
-    images = ["imgs/a.jpg", "imgs/b.jpg", "imgs/c.jpg"]; // 奇数ID用
+    images = [
+{image:"imgs/s2.jpg", credit:"\"Surpriser\" by Andrew Otto, CC BY 2.0 https://flic.kr/p/6hMSH8, cropped from original"},
+{image:"imgs/s3.jpg", credit:"\"listen to ME!\" by Jonathan Powell, CC BY 2.0 https://flic.kr/p/98HKz, cropped from original"},
+{image:"imgs/s4.jpg", credit:"\"Surprise\" by Medill DC, CC BY 2.0 https://flic.kr/p/9RVSvw, cropped from original"},
+    ]; 
+   // 奇数ID用
   }
   current_index = 0;
-  imgElement.src = images[current_index];
+  imgElement.src = images[current_index].image;
+  creditInfo.textContent = images[current_index].credit;
 }
 
 /* ========= ボタン操作 ========= */
 changeButton.addEventListener("click", () => {
   current_index = (current_index + 1) % images.length;
-  imgElement.src = images[current_index];
+  imgElement.src = images[current_index].image;
+  creditInfo.textContent = images[current_index].credit;
 });
 
 saveBtn.addEventListener("click", () => {
   const ansText = AnswerBox.value.trim();
   if (!ansText) return;
-  answers.push([imgkeysque.shift(), images[current_index]]);
+  answers.push([imgkeysque.shift(), images[current_index].image]);
   answers.push([anskeysque.shift(), ansText]);
   images.splice(current_index, 1);
   if (images.length === 0) {
@@ -340,7 +353,8 @@ saveBtn.addEventListener("click", () => {
     return;
   }
   current_index = current_index % images.length;
-  imgElement.src = images[current_index];
+  imgElement.src = images[current_index].image;
+  creditInfo.textContent = images[current_index].credit;
   AnswerBox.value = "";
 });
 </script>
