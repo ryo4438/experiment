@@ -117,8 +117,12 @@
     <form id="surveyForm">
 
       <div class="question-box" data-question="q2" data-key="entry.807851115">
-        <p>参加者id</p>
-        <input type="text" name="q2" placeholder="数字を入力">
+        <p>学籍番号</p>
+        <input type="password" name="q2" 
+               placeholder="学籍番号を半角数字8桁で記入(例:12345678)" 
+               style="padding:8px; width:70%;" 
+               pattern="\d{8}" 
+               title="半角数字8桁で入力してください">
       </div>
       <div class="question-box" data-question="q1" data-key="entry.58144620">
         <p>Q1：今どれくらい目が覚めていますか？</p>
@@ -153,7 +157,7 @@
       <button id="saveBtn">回答を決定する</button>
 
       <h1>60秒カウントダウン</h1>
-      <div id="timer">60</div>
+      <div id="timer">10</div>
     </div>
   </div>
 
@@ -270,7 +274,7 @@ setupSurvey("AftsurveyForm", "AftSurveyBtn", true);
 
 /* ========= タイマー ========= */
 function startTimer() {
-  let timeLeft = 60;
+  let timeLeft = 10;
   const timer = document.getElementById("timer");
   timer.textContent = timeLeft;
   const countdown = setInterval(() => {
