@@ -117,11 +117,16 @@
     <form id="surveyForm">
 
       <div class="question-box" data-question="q2" data-key="entry.807851115">
-        <p>参加者id</p>
-        <input type="text" name="q2" placeholder="数字を入力">
+        <p>学籍番号(半角8桁で記入)</p>
+        <input type="text" name="q2" 
+               placeholder="(例:12345678)" 
+               style="padding:8px; width:70%;" 
+               pattern="\d{8}" 
+               title="半角数字8桁で入力してください">
       </div>
+      
       <div class="question-box" data-question="q1" data-key="entry.58144620">
-        <p>Q1：今どれくらい目が覚めていますか？</p>
+        <p>今どれくらい目が覚めていますか？</p>
         <label><input type="radio" name="q1" value="9"> 非常にはっきりと目覚めている</label>
         <label><input type="radio" name="q1" value="8"> とても目覚めている</label>
         <label><input type="radio" name="q1" value="7"> 目覚めている</label>
@@ -223,8 +228,10 @@ function setupSurvey(formId, btnId, openUrl = false) {
         return Array.from(inputs).some(i => i.checked);
       } else if (inputs[0].type === "text") {
         const val = inputs[0].value.trim();
-        // q2（参加者id）は整数チェックを厳密に行う
+        // q2（学籍番号）は整数チェックを厳密に行う
         if (name === "q2") {
+          //console.log(inputs[0]);
+          inputs[0].value = inputs[0].value.replace(/[^0-9]/g, '').slice(0,8);
           return /^\d+$/.test(val);  // 整数のみ許可
         }
         return val !== "";
@@ -247,7 +254,12 @@ function setupSurvey(formId, btnId, openUrl = false) {
       } else if (inputs[0].type === "text") {
         val = inputs[0].value.trim();
       }
-      if (val !== "") answers.push([key, val]);
+      if (val !== "") {
+        if (name == "q2"){
+          answers.push()
+        }
+        else answers.push([key, val]);
+      }
     });
 
     // IDの偶奇で介入画像を決定
@@ -317,9 +329,9 @@ const anskeysque = ["entry.123989728", "entry.1704288844", "entry.1758329231"];
 function setImagesById(idVal) {
   if (idVal % 2 === 0) {
     images = [
-      {image:"imgs/1.jpg", credit: "aaa"}, 
-      {image:"imgs/2.jpg", credit: "aaa"}, 
-      {image:"imgs/3.jpg", credit: "bbb"}
+{image:"imgs/s2.jpg", credit:"\"Surpriser\" by Andrew Otto, CC BY 2.0 https://flic.kr/p/6hMSH8, cropped from original"},
+{image:"imgs/s3.jpg", credit:"\"listen to ME!\" by Jonathan Powell, CC BY 2.0 https://flic.kr/p/98HKz, cropped from original"},
+{image:"imgs/s4.jpg", credit:"\"Surprise\" by Medill DC, CC BY 2.0 https://flic.kr/p/9RVSvw, cropped from original"},
     ]; 
     // 偶数ID用
   } else {
